@@ -5,7 +5,7 @@ use Phalcon\Mvc\Controller;
 
 class BlobsController extends Controller
 {
-    public function blobAction($name)
+    public function indexAction($name = null)
     {
 
     }
