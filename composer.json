@@ -1,0 +1,16 @@
+{
+    "name": "kmfk/kmfk-io",
+    "description": "Personal site",
+    "authors": [
+        {
+            "name":  "Keith Kirk",
+            "email": "keith@kmfk.io"
+        }
+    ],
+    "require": {
+        "knplabs/github-api": "~1.2"
+    },
+    "autoload": {
+        "classmap": ["app/controllers/"]
+    }
+}
