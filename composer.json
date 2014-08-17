@@ -8,7 +8,9 @@
         }
     ],
     "require": {
-        "knplabs/github-api": "~1.2"
+        "jms/serializer":       "~0.17",
+        "knplabs/github-api":   "~1.2",
+        "michelf/php-markdown": "~1.4"
     },
     "autoload": {
         "classmap": ["app/controllers/"]

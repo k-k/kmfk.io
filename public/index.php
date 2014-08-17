@@ -1,37 +1,29 @@
 <?php
 
-use Phalcon\DI\FactoryDefault;
 use Phalcon\Exception;
-use Phalcon\Loader;
-use Phalcon\Mvc;
-
+use Phalcon\Mvc\Application;
 
 try {
 
-    require_once __DIR__ . "/../vendor/autoload.php";
+    define('BASE_DIR', dirname(__DIR__));
+    define('APP_DIR', BASE_DIR . '/app');
 
-    $di = new FactoryDefault();
+    /**
+     * Use composer's autoloader
+     */
+    require_once BASE_DIR . "/vendor/autoload.php";
 
-    $di->set('view', function() {
-        $view = new Mvc\View();
-        $view->setViewsDir('../app/views/');
+    /**
+     * Read the configuration
+     */
+    $config = include APP_DIR . '/config/config.php';
 
-        return $view;
-    });
+    /**
+     * Read services
+     */
+    include APP_DIR . '/config/services.php';
 
-    $di->set('url', function() {
-        $url = new \Mvc\Url();
-        $url->setBaseUri('/');
-
-        return $url;
-    });
-
-    $di->set('github', function() {
-
-        return new \Github\Client();
-    }, true);
-
-    $application = new Mvc\Application($di);
+    $application = new Application($di);
 
     echo $application->handle()->getContent();
 

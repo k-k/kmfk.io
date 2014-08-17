@@ -7,7 +7,7 @@ class GithubController extends Controller
 {
     public function repositoryAction($organization, $repository)
     {
-        $github = $this->di->getGithub();
+        $github = $this->di->get('github_client');
 
         $repo = $github->api('repo')->show($organization, $repository);
         $info = [
@@ -19,11 +19,9 @@ class GithubController extends Controller
             'issues'   => $repo['open_issues_count']
         ];
 
-        $response = new Response();
+        $this->response->setHeader("Content-Type", "application/json");
+        $this->response->setJsonContent($info);
 
-        $response->setHeader("Content-Type", "application/json");
-        $response->setJsonContent($info);
-
-        return $response;
+        return $this->response;
     }
 }
