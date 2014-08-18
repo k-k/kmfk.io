@@ -1,7 +1,8 @@
 <div id="content">
     <h1 class="hello">Hello, I'm Keith Kirk.</h1>
     <h3 class="title">A full stack Software Engineer</h3>
-    <a class="email" href="mailto:hello@kmfk.io">greetings@kmfk.io</a>
+    <img class="email-icon" src="img/email-32.png" />
+    <a class="email" href="mailto:greetings@kmfk.io">greetings@kmfk.io</a>
     <div class="icons">
         <a href="https://github.com/kmfk" target="_blank"><img src="img/github-32.png" /></a>
         <a href="http://stackoverflow.com/users/396318/kmfk" target="_blank"><img src="img/stackoverflow-32.png" /></a>

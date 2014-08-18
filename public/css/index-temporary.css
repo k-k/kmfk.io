@@ -3,7 +3,7 @@ body {
 }
 
 div#content {
-    width: 400px;
+    width: 600px;
     margin: 10% auto;
     text-align: right;
 }
@@ -18,18 +18,24 @@ h1, h3, a.email {
 }
 
 h1.hello {
-    font-size: 32px;
+    font-size: 48px;
 }
 
 h3.title {
-    /*padding-left: 12%;*/
     opacity: .75;
-    font-size: 18px;
+    font-size: 24px;
+}
+
+img.email-icon {
+    opacity: .9;
+    position: relative;
+    top: 2px;
+    height: 18px;
 }
 
 a.email {
-    opacity: .66;
-    font-size: 16px;
+    opacity: .9;
+    font-size: 20px;
     text-decoration: none;
 }
 
@@ -46,7 +52,7 @@ div.icons {
 }
 
 div.icons a {
-    opacity: .33;
+    opacity: .45;
 }
 
 div.icons a:hover {

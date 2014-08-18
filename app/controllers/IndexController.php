@@ -6,7 +6,7 @@ class IndexController extends Controller
 {
     public function indexAction()
     {
-        $this->tag->setTitle("KMFK");
+        $this->tag->setTitle("Keith Kirk");
 
         $this->assets
             ->addCss('css/index-temporary.css')
