@@ -1,5 +1,7 @@
 body {
-    background-color: #16A085;
+    margin: 0;
+    padding: 0;
+    background-color: #2574A9;
 }
 
 div#content {
@@ -27,7 +29,7 @@ h3.title {
 }
 
 img.email-icon {
-    opacity: .9;
+    opacity: .45;
     position: relative;
     top: 2px;
     height: 18px;
