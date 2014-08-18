@@ -11,12 +11,14 @@ class GithubController extends Controller
 
         $repo = $github->api('repo')->show($organization, $repository);
         $info = [
-            'id'       => $repo['id'],
-            'name'     => $repo['name'],
-            'stars'    => $repo['stargazers_count'],
-            'watchers' => $repo['subscribers_count'],
-            'forks'    => $repo['forks_count'],
-            'issues'   => $repo['open_issues_count']
+            'id'          => $repo['id'],
+            'name'        => $repo['name'],
+            'description' => $repo['description'],
+            'homepage'    => $repo['homepage'],
+            'stars'       => $repo['stargazers_count'],
+            'watchers'    => $repo['subscribers_count'],
+            'forks'       => $repo['forks_count'],
+            'issues'      => $repo['open_issues_count']
         ];
 
         $this->response->setHeader("Content-Type", "application/json");

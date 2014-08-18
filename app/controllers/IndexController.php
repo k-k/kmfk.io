@@ -1,5 +1,6 @@
 <?php
 
+use Phalcon\Assets\Filters\CssMin;
 use Phalcon\Mvc\Controller;
 
 class IndexController extends Controller
@@ -31,9 +32,15 @@ class IndexController extends Controller
         }
 
         $this->assets
+            ->collection('header-css')
+            ->setPrefix('http://static.kmfk.io/')
+            ->setTargetPath('css/kmfk.css')
+            ->setTargetUri('css/kmfk.css')
             ->addCss('css/index-temporary.css')
             ->addCss('css/animate.css')
-            ->addCss('//fonts.googleapis.com/css?family=Raleway:700', false);
+            ->addCss('http://fonts.googleapis.com/css?family=Raleway:700', false, false)
+            ->join(true)
+            ->addFilter(new CssMin());
 
         $this->view->setVars(['email' => $emails[$counter]]);
     }
