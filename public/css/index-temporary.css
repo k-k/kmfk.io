@@ -39,6 +39,7 @@ a.email {
     opacity: .9;
     font-size: 20px;
     text-decoration: none;
+    display: block;
 }
 
 a.email:hover {
@@ -47,7 +48,6 @@ a.email:hover {
 
 div.icons {
     display: inline-block;
-    vertical-align: middle;
     padding-top: 20px;
     text-align: right;
     width: 370px;
