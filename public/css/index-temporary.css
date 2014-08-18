@@ -1,0 +1,54 @@
+body {
+    background-color: #34495E;
+}
+
+div#content {
+    width: 400px;
+    margin: 10% auto;
+    text-align: right;
+}
+
+h1, h3, a.email {
+    color: #ffffff;
+    margin: 0;
+    font-weight: 700;
+    text-transform: uppercase;
+    font-family: 'Raleway',sans-serif;
+    padding: 2px;
+}
+
+h1.hello {
+    font-size: 32px;
+}
+
+h3.title {
+    /*padding-left: 12%;*/
+    opacity: .75;
+    font-size: 18px;
+}
+
+a.email {
+    opacity: .66;
+    font-size: 16px;
+    text-decoration: none;
+}
+
+a.email:hover {
+    opacity: 1;
+}
+
+div.icons {
+    display: inline-block;
+    vertical-align: middle;
+    padding-top: 20px;
+    text-align: right;
+    width: 370px;
+}
+
+div.icons a {
+    opacity: .33;
+}
+
+div.icons a:hover {
+    opacity: 1;
+}

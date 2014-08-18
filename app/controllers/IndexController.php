@@ -8,6 +8,10 @@ class IndexController extends Controller
     {
         $this->tag->setTitle("KMFK");
 
+        $this->assets
+            ->addCss('css/index-temporary.css')
+            ->addCss('//fonts.googleapis.com/css?family=Raleway:700', false);
+
     }
 
 }
