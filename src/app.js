@@ -4,7 +4,7 @@ import express from 'express';
 import { marked } from 'marked';
 import defaultConfig from './config.js';
 import { fetchRepository } from './github.js';
-import { blobPage, indexPage } from './views.js';
+import { blobPage, indexPage, notFoundPage } from './views.js';
 
 const EMAILS = ['hello', 'hi', 'greetings', 'salutations', 'hola', 'i-dont-bite', 'email-me-already'];
 const EMAIL_COOKIE = 'email-counter';
@@ -19,6 +19,8 @@ export function createApp(config = defaultConfig, { fetchImpl } = {}) {
   app.disable('x-powered-by');
 
   app.use(express.static(config.publicDir, { index: false }));
+
+  const notFound = (req, res) => res.status(404).type('html').send(notFoundPage({ staticBaseUrl: config.staticBaseUrl }));
 
   // Each visit shows the next mailto alias, cycling through EMAILS (was a PHP session counter).
   const index = (req, res) => {
@@ -41,14 +43,14 @@ export function createApp(config = defaultConfig, { fetchImpl } = {}) {
   app.get('/blobs/show/:name', async (req, res, next) => {
     const { name } = req.params;
     if (!/^[\w-]+$/.test(name)) {
-      return res.status(404).end();
+      return notFound(req, res);
     }
 
     let markdown;
     try {
       markdown = await readFile(path.join(config.blobsDir, `${name}.md`), 'utf8');
     } catch (err) {
-      return err.code === 'ENOENT' ? res.status(404).end() : next(err);
+      return err.code === 'ENOENT' ? notFound(req, res) : next(err);
     }
 
     res.type('html').send(blobPage({ html: marked.parse(markdown), staticBaseUrl: config.staticBaseUrl }));
@@ -64,9 +66,7 @@ export function createApp(config = defaultConfig, { fetchImpl } = {}) {
     }
   });
 
-  app.use((req, res) => {
-    res.status(404).type('text').send('Not Found');
-  });
+  app.use(notFound);
 
   return app;
 }
