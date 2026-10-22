@@ -4,16 +4,24 @@ body {
 
 div#content {
     width: auto;
+    margin: 0;
     text-align: center;
 }
 
-h1 {
-    font-size: 3vw;
-    color: rgba(0,0,0,.30);
+div.overlay {
+    position: fixed;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    background: url(../img/giphy.gif) center / cover no-repeat;
 }
 
-img {
-    margin-bottom: 24px;
-    height: 10vw;
-    border-radius: 24px;
+h1 {
+    position: fixed;
+    left: 0;
+    right: 0;
+    bottom: 8vh;
+    font-size: 4vw;
+    text-shadow: 0 2px 12px rgba(0, 0, 0, .6);
 }
