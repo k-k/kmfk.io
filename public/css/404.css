@@ -1,0 +1,19 @@
+body {
+    background-color: #6C7A89;
+}
+
+div#content {
+    width: auto;
+    text-align: center;
+}
+
+h1 {
+    font-size: 3vw;
+    color: rgba(0,0,0,.30);
+}
+
+img {
+    margin-bottom: 24px;
+    height: 10vw;
+    border-radius: 24px;
+}

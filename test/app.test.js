@@ -76,7 +76,9 @@ describe('blobs', () => {
   });
 
   it('returns 404 for missing or unsafe names', async () => {
-    assert.equal((await fetch(`${base}/blobs/show/nope`)).status, 404);
+    const res = await fetch(`${base}/blobs/show/nope`);
+    assert.equal(res.status, 404);
+    assert.match(await res.text(), /You've just been 404'd\./);
     assert.equal((await fetch(`${base}/blobs/show/..%2Fpackage`)).status, 404);
   });
 });
@@ -110,7 +112,19 @@ describe('static assets', () => {
     assert.equal(res.headers.get('content-type'), 'image/png');
   });
 
-  it('returns 404 for unknown paths', async () => {
-    assert.equal((await fetch(`${base}/does/not/exist`)).status, 404);
+  it('returns the custom 404 page for unknown paths', async () => {
+    const res = await fetch(`${base}/does/not/exist`);
+    const body = await res.text();
+
+    assert.equal(res.status, 404);
+    assert.match(res.headers.get('content-type'), /text\/html/);
+    assert.match(body, /You've just been 404'd\./);
+    assert.match(body, /\/css\/404\.css/);
+    assert.match(body, /\/img\/giphy\.gif/);
+  });
+
+  it('serves the 404 page assets', async () => {
+    assert.equal((await fetch(`${base}/css/404.css`)).status, 200);
+    assert.equal((await fetch(`${base}/img/giphy.gif`)).headers.get('content-type'), 'image/gif');
   });
 });
