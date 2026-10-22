@@ -17,11 +17,8 @@ services:
       http_path: /img/favicon-blue.ico
     routes:
       - path: /
-    envs:
-      # Optional: raises the rate limit for /github/repository/:org/:repo
-      - key: GITHUB_TOKEN
-        scope: RUN_TIME
-        type: SECRET
+    # Optional: add GITHUB_TOKEN as an encrypted env var in the app settings to raise
+    # the rate limit for /github/repository/:org/:repo.
 static_sites:
   # The Durham property tax map, built from its own repo and served at kmfk.io/durham.
   # App Platform strips the /durham prefix, so the repo's public/ becomes the site root.

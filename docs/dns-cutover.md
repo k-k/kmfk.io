@@ -46,8 +46,9 @@ Send a test email to an @kmfk.io address too.
 
 Keep everything running for a few days in case you need to roll back. Rolling back means pointing `@` A at the load balancer IP again. Then, in the `kmfk.io` team:
 
-1. Decide what happens to `spokesman.io` (move it, redirect it, or let it go). It still runs on the Droplet.
-2. Delete the `static` CNAME, and the `kmfk-static` Space once you've confirmed nothing else uses it.
-3. Delete the load balancer and its certificate, then snapshot the Droplet if you want a backup, and destroy it along with its "Default" firewall.
+1. Make sure `kmfk.io/durham` works from the app (see the README). The scraper's `make deploy` still rsyncs to the Droplet, so switch it over first.
+2. Decide what happens to `spokesman.io` (move it, redirect it, or let it go). It still runs on the Droplet.
+3. Delete the `static` CNAME, and the `kmfk-static` Space once you've confirmed nothing else uses it.
+4. Delete the load balancer and its certificate, then snapshot the Droplet if you want a backup, and destroy it along with its "Default" firewall.
 
 Optional: add a DMARC record (`_dmarc` TXT `v=DMARC1; p=none; rua=mailto:…`) and Google DKIM from the Workspace admin console. Neither exists today.
