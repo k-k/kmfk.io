@@ -1,4 +1,4 @@
-# DigitalOcean App Platform spec.
+# DigitalOcean App Platform spec. Create it in the kmfk.io team, which also holds the kmfk.io DNS zone.
 # Create the app with: doctl apps create --spec .do/app.yaml
 # Update it with:      doctl apps update <app-id> --spec .do/app.yaml
 name: kmfk-io
