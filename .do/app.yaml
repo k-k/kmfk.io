@@ -22,6 +22,18 @@ services:
       - key: GITHUB_TOKEN
         scope: RUN_TIME
         type: SECRET
+static_sites:
+  # The Durham property tax map, built from its own repo and served at kmfk.io/durham.
+  # App Platform strips the /durham prefix, so the repo's public/ becomes the site root.
+  - name: durham
+    github:
+      repo: k-k/property-tax-scraper
+      branch: main
+      deploy_on_push: true
+    environment_slug: html
+    output_dir: public
+    routes:
+      - path: /durham
 domains:
   - domain: kmfk.io
     type: PRIMARY

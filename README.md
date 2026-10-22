@@ -48,3 +48,7 @@ The app spec lives in `.do/app.yaml`. It builds from the Dockerfile and redeploy
 2. Optionally set `GITHUB_TOKEN` as an encrypted env var in the app settings.
 3. Point DNS for `kmfk.io` and `www.kmfk.io` at the app. See [docs/dns-cutover.md](docs/dns-cutover.md), which covers keeping the Google Workspace email records intact.
 4. Once the new app serves traffic, retire the old load balancer and Droplet (see the guide; `spokesman.io` also runs on that Droplet).
+
+## /durham
+
+`kmfk.io/durham` is the Durham property tax map from [k-k/property-tax-scraper](https://github.com/k-k/property-tax-scraper). It isn't part of this app. `.do/app.yaml` deploys it as a second component (a static site built from that repo's `public/` directory) routed at `/durham`, so it redeploys on its own whenever that repo's `main` branch changes. App Platform's GitHub app needs access to that repo too.
