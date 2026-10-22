@@ -2,7 +2,7 @@
 # Create the app with: doctl apps create --spec .do/app.yaml
 # Update it with:      doctl apps update <app-id> --spec .do/app.yaml
 name: kmfk-io
-region: nyc
+region: sfo
 services:
   - name: web
     github:
