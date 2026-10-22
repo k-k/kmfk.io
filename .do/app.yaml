@@ -1,0 +1,27 @@
+# DigitalOcean App Platform spec.
+# Create the app with: doctl apps create --spec .do/app.yaml
+# Update it with:      doctl apps update <app-id> --spec .do/app.yaml
+name: kmfk-io
+region: nyc
+services:
+  - name: web
+    github:
+      repo: k-k/kmfk.io
+      branch: master
+      deploy_on_push: true
+    dockerfile_path: Dockerfile
+    http_port: 8080
+    instance_count: 1
+    instance_size_slug: apps-s-1vcpu-0.5gb
+    health_check:
+      http_path: /img/favicon-blue.ico
+    routes:
+      - path: /
+    envs:
+      # Optional: raises the rate limit for /github/repository/:org/:repo
+      - key: GITHUB_TOKEN
+        scope: RUN_TIME
+        type: SECRET
+domains:
+  - domain: kmfk.io
+    type: PRIMARY

@@ -39,3 +39,12 @@ All optional, set as environment variables:
 docker build -t kmfk-io .
 docker run -p 8080:8080 kmfk-io
 ```
+
+## Deploying to DigitalOcean App Platform
+
+The app spec lives in `.do/app.yaml`. It builds from the Dockerfile and redeploys on every push to `master`.
+
+1. Create the app, either in the DigitalOcean control panel (Create App, pick this repo; it detects the spec) or with `doctl apps create --spec .do/app.yaml`.
+2. Optionally set `GITHUB_TOKEN` as an encrypted env var in the app settings.
+3. Point DNS for `kmfk.io` at the app. If the domain's DNS is managed by DigitalOcean this is automatic; otherwise add the CNAME the control panel shows. App Platform issues the HTTPS certificate.
+4. Once the new app serves traffic, the server running the old PHP site can be retired.
