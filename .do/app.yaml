@@ -1,0 +1,38 @@
+# DigitalOcean App Platform spec. Create it in the kmfk.io team, which also holds the kmfk.io DNS zone.
+# Create the app with: doctl apps create --spec .do/app.yaml
+# Update it with:      doctl apps update <app-id> --spec .do/app.yaml
+name: kmfk-io
+region: sfo
+services:
+  - name: web
+    github:
+      repo: k-k/kmfk.io
+      branch: master
+      deploy_on_push: true
+    dockerfile_path: Dockerfile
+    http_port: 8080
+    instance_count: 1
+    instance_size_slug: apps-s-1vcpu-0.5gb
+    health_check:
+      http_path: /img/favicon-blue.ico
+    routes:
+      - path: /
+    # Optional: add GITHUB_TOKEN as an encrypted env var in the app settings to raise
+    # the rate limit for /github/repository/:org/:repo.
+static_sites:
+  # The Durham property tax map, built from its own repo and served at kmfk.io/durham.
+  # App Platform strips the /durham prefix, so the repo's public/ becomes the site root.
+  - name: durham
+    github:
+      repo: k-k/property-tax-scraper
+      branch: main
+      deploy_on_push: true
+    environment_slug: html
+    output_dir: public
+    routes:
+      - path: /durham
+domains:
+  - domain: kmfk.io
+    type: PRIMARY
+  - domain: www.kmfk.io
+    type: ALIAS
