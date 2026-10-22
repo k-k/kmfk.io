@@ -42,6 +42,7 @@ describe('home page', () => {
     assert.match(body, /Hello, I'm Keith Kirk\./);
     assert.match(body, /href="mailto:hello@kmfk\.io"/);
     assert.match(body, /\/css\/kmfk\.css/);
+    assert.match(body, /posthog\.init\('phc_sCCIKvpBUErZ1bpHCY7lpdWtZAhLO32eyBRE1DEn1Pi'/);
   });
 
   it('cycles the email alias on each visit and wraps around', async () => {
