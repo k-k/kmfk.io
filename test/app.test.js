@@ -120,7 +120,7 @@ describe('static assets', () => {
     assert.match(res.headers.get('content-type'), /text\/html/);
     assert.match(body, /You've just been 404'd\./);
     assert.match(body, /\/css\/404\.css/);
-    assert.match(body, /\/img\/giphy\.gif/);
+    assert.match(body, /<div class="overlay">/);
   });
 
   it('serves the 404 page assets', async () => {

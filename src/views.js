@@ -56,7 +56,7 @@ export function notFoundPage({ staticBaseUrl }) {
     title: 'Keith Kirk // 404!',
     styles: [`${staticBaseUrl}/css/index-temporary.css`, `${staticBaseUrl}/css/404.css`, 'https://fonts.googleapis.com/css?family=Raleway:700'],
     content: `<div id="content">
-    <img src="${staticBaseUrl}/img/giphy.gif" />
+    <div class="overlay">&nbsp;</div>
     <h1>You've just been 404'd.</h1>
 </div>`,
   });
