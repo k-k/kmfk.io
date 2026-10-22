@@ -1,4 +1,5 @@
 import assert from 'node:assert/strict';
+import http from 'node:http';
 import { after, before, describe, it } from 'node:test';
 import config from '../src/config.js';
 import { createApp } from '../src/app.js';
@@ -103,6 +104,20 @@ describe('github proxy', () => {
 
   it('passes through a missing repository as 404', async () => {
     assert.equal((await fetch(`${base}/github/repository/nobody/nothing`)).status, 404);
+  });
+});
+
+describe('spokesman.io', () => {
+  it('redirects to kmfk.io', async () => {
+    for (const host of ['spokesman.io', 'www.spokesman.io']) {
+      // fetch() won't override Host, so use a raw request.
+      const res = await new Promise((resolve, reject) => {
+        http.get(`${base}/anything`, { headers: { host } }, resolve).on('error', reject);
+      });
+      res.resume();
+      assert.equal(res.statusCode, 301);
+      assert.equal(res.headers.location, 'https://kmfk.io/');
+    }
   });
 });
 

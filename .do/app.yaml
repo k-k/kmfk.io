@@ -36,3 +36,10 @@ domains:
     type: PRIMARY
   - domain: www.kmfk.io
     type: ALIAS
+  # spokesman.io redirects to kmfk.io (see src/app.js)
+  - domain: spokesman.io
+    type: ALIAS
+    zone: spokesman.io
+  - domain: www.spokesman.io
+    type: ALIAS
+    zone: spokesman.io

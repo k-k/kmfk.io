@@ -18,6 +18,14 @@ export function createApp(config = defaultConfig, { fetchImpl } = {}) {
   const app = express();
   app.disable('x-powered-by');
 
+  // spokesman.io was a placeholder on the old Droplet; send its visitors here instead.
+  app.use((req, res, next) => {
+    if (/(^|\.)spokesman\.io$/i.test(req.hostname)) {
+      return res.redirect(301, 'https://kmfk.io/');
+    }
+    next();
+  });
+
   app.use(express.static(config.publicDir, { index: false }));
 
   const notFound = (req, res) => res.status(404).type('html').send(notFoundPage({ staticBaseUrl: config.staticBaseUrl }));
