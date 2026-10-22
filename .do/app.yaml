@@ -25,3 +25,5 @@ services:
 domains:
   - domain: kmfk.io
     type: PRIMARY
+  - domain: www.kmfk.io
+    type: ALIAS

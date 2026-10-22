@@ -1,53 +1,58 @@
 # Moving kmfk.io from the Droplet to App Platform
 
-The app spec (`.do/app.yaml`) attaches `kmfk.io` to the app, but App Platform can't serve the domain until DNS points at it. Until then, the existing Droplet keeps serving traffic. Nothing changes for visitors until you change DNS.
+The app spec (`.do/app.yaml`) attaches `kmfk.io` and `www.kmfk.io` to the app, but App Platform can't serve them until DNS points at it. Until then the old Droplet keeps serving traffic, so nothing changes for visitors before the switch.
 
-## 1. Check where DNS is hosted today
+## How it's set up today (checked 2026-10-22)
+
+| Record | Value | Notes |
+| --- | --- | --- |
+| NS | `ns1/ns2/ns3.digitalocean.com` | DigitalOcean DNS (registrar: Name.com) |
+| `@` A | the old Droplet (nginx 1.4.6 / Ubuntu 14.04, still serving the PHP site, Let's Encrypt cert) | TTL 300 |
+| `www` CNAME | `kmfk.io.` | follows the apex |
+| `static` CNAME | `kmfk-static.sfo2.cdn.digitaloceanspaces.com.` | Spaces CDN. Not responding, and the new site doesn't use it |
+| MX | `aspmx.l.google.com` (1), `alt1`/`alt2.aspmx.l.google.com` (5), `aspmx2`/`aspmx3.googlemail.com` (10) | Google Workspace email |
+| `@` TXT | `v=spf1 include:_spf.google.com ~all`, `keybase-site-verification=…` | |
+| CAA, AAAA, DMARC | none | No CAA, so certificate issuance isn't restricted |
+
+The kmfk.io zone and the Droplet are **not** in the DigitalOcean account that holds the current doctl login. They live in a second DigitalOcean account or team.
+
+## Why the account matters
+
+DigitalOcean DNS can't hold a CNAME at the apex, so App Platform can only point `kmfk.io` at an app when it manages the zone itself. That requires **the app and the domain to be in the same DigitalOcean account/team**. A domain can only exist in one DigitalOcean account at a time.
+
+Pick one:
+
+- **Option 1: Move the zone into the current account (recommended).** Everything ends up in one place, and the old account can be closed once the Droplet is gone.
+- **Option 2: Create the app in the old account.** This is the fewest steps, since no DNS records move, but it keeps the old account around.
+
+## Option 1: move the zone, then cut over
+
+1. **Before the move:** merge the PR, then create the app in the current account (`doctl apps create --spec .do/app.yaml`). Check it at its `https://<app>.ondigitalocean.app` URL: `/`, `/blobs/show/qpush-bundle`, and an image.
+2. In the **old** account, export the zone (`doctl compute domain records list kmfk.io -o json > kmfk.io-records.json`, using a doctl context for that account) or screenshot Networking → Domains → kmfk.io. Look for records the public lookup couldn't see (e.g. a DKIM `google._domainkey` TXT or other subdomains).
+3. In the old account, delete the `kmfk.io` domain. **From this moment until step 4 finishes, kmfk.io doesn't resolve**, so do steps 3–4 back to back. Mail servers retry for hours, so a gap of a few minutes doesn't lose email.
+4. In the current account, add `kmfk.io` under Networking → Domains and immediately recreate:
+   - the 5 MX records above, with their priorities
+   - the SPF and keybase TXT records
+   - any other records from the export, except `@` A and `www` CNAME (App Platform creates those in the next step)
+   - optionally `static` CNAME, though it can be dropped since nothing uses it
+5. In the app's Settings → Domains, confirm both domains with "DigitalOcean manages my domain". App Platform points `kmfk.io` and `www` at the app and issues the certificate, which usually takes a few minutes.
+
+## Option 2: app in the old account
+
+1. Merge the PR and create the app **in the old account**, then check it on its `ondigitalocean.app` URL.
+2. In Settings → Domains, confirm `kmfk.io` and `www.kmfk.io` with "DigitalOcean manages my domain". App Platform replaces the `@` A record and the `www` CNAME. MX, TXT and `static` are untouched.
+
+## Verify
 
 ```sh
-dig +short NS kmfk.io
-dig +short A kmfk.io
-dig +short CNAME www.kmfk.io
-dig +short A static.kmfk.io
-dig +short MX kmfk.io
-dig +short TXT kmfk.io
-dig +short CAA kmfk.io
+dig +short A kmfk.io @ns1.digitalocean.com   # no longer the old Droplet IP
+dig +short MX kmfk.io @ns1.digitalocean.com  # the Google MX records are still there
+curl -sI https://kmfk.io/ | head -1           # 200, without an nginx/1.4.6 Server header
+curl -sI https://www.kmfk.io/ | head -1
 ```
 
-- Nameservers `ns1/ns2/ns3.digitalocean.com`: DNS is in DigitalOcean's Networking → Domains. Follow **path A**.
-- Anything else (registrar, Cloudflare, Route 53…): follow **path B**.
+Send a test email to an @kmfk.io address too.
 
-**Email:** `keith@kmfk.io` and the rotating aliases rely on the MX and TXT (SPF/DKIM/DMARC) records. Neither path touches them, but don't delete them, and copy them over first if you ever move nameservers.
+## Retire the Droplet
 
-## 2. Before the switch
-
-1. Merge the PR and create the app (`doctl apps create --spec .do/app.yaml`, or Create App in the control panel).
-2. Open the app's default URL (`https://<app>.ondigitalocean.app`) and check `/`, `/blobs/show/qpush-bundle` and an image.
-3. A day ahead, lower the TTL on the `kmfk.io` A record (and `www` if it exists) to 300 seconds, so the switch and any rollback take effect quickly.
-4. If a CAA record exists, make sure it allows the certificate authority App Platform uses (`letsencrypt.org`). Otherwise the HTTPS certificate can't be issued.
-
-## 3. The switch
-
-### Path A: DNS is already on DigitalOcean
-
-App Platform manages the record itself. In the app's Settings → Domains, `kmfk.io` will show as pending. Confirm "DigitalOcean manages my domain", and the platform replaces the Droplet's A record and issues the certificate. Usually this takes minutes.
-
-### Path B: DNS is with another provider
-
-1. In the app's Settings → Domains, find the CNAME target (`<app>.ondigitalocean.app`).
-2. `kmfk.io` is an apex domain, and a plain CNAME isn't allowed at the apex. Use the provider's ALIAS/ANAME/"CNAME flattening" record pointing to that target, and remove the old A record(s) to the Droplet IP.
-3. If the provider has no ALIAS-style record, move the nameservers to DigitalOcean instead: add the domain under Networking → Domains, recreate **every** existing record there first (MX, TXT, etc.), then change nameservers at the registrar and continue with path A.
-
-## 4. Other hostnames
-
-- `www.kmfk.io`: if it exists today, add it to the app as an alias domain (`type: ALIAS` in `.do/app.yaml`) and point it the same way, or it keeps going to the Droplet.
-- `static.kmfk.io`: the new site doesn't use it. Leave it on the Droplet until you retire the Droplet, then delete the record.
-
-## 5. Verify, then retire the Droplet
-
-```sh
-dig +short A kmfk.io                 # no longer the Droplet's IP
-curl -sI https://kmfk.io/ | head -1  # HTTP/2 200 from App Platform
-```
-
-Keep the Droplet running for a few days (at least the old TTL) in case you need to roll back. Rolling back just means pointing the record back to the Droplet IP. Then snapshot it if you want a backup, destroy it, and raise the TTL back up.
+Keep the Droplet for a few days in case you need to roll back. Rolling back means pointing `@` A at its IP again. Then snapshot it if you want a backup, and destroy it. The `kmfk-static` Space can go too once you've confirmed nothing else uses it. Optionally add a DMARC record (`_dmarc` TXT `v=DMARC1; p=none; rua=mailto:…`), since there isn't one today.
